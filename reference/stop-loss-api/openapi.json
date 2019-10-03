@@ -1,0 +1,1031 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Portfolios API",
+    "version": "1.0",
+    "description": "Track and manage investment portfolios and holdings.\n\nTODO:\n\n· Add examples and then test mocking\n\n· Add auth and security concept/mechanisms\n\n· Start building client application MVP (use mock server for consuming data)\n\n· start with portfolios and holdings\n\n· allocation should come later\n\n· Add GET categories so client can easily see existing categories when creating an allocation\n\n· Add Wishlist API. this can be used to recommend purchases based on allocation strategy and potentially set pricing rules",
+    "contact": {}
+  },
+  "host": "localhost:3000",
+  "schemes": [
+    "http"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "paths": {
+    "/portfolios": {
+      "get": {
+        "summary": "get portfolios",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/PortfolioList"
+                  }
+                }
+              }
+            },
+            "examples": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        "description": "Gets all user's portfolios",
+        "tags": [
+          "Portfolios"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "type": "object"
+            }
+          }
+        ]
+      },
+      "post": {
+        "summary": "",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ]
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        "description": "Create a portfolio",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/PortfolioCreate"
+            }
+          }
+        ],
+        "tags": [
+          "Portfolios"
+        ]
+      }
+    },
+    "/portfolios/{portfolioId}": {
+      "parameters": [
+        {
+          "type": "string",
+          "name": "portfolioId",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "get": {
+        "summary": "get portfolio details",
+        "tags": [
+          "Portfolios"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/PortfolioDetails"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        "description": "Gets portfolio details"
+      },
+      "put": {
+        "summary": "update portfolio details",
+        "tags": [
+          "Portfolios"
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/PortfolioUpdate"
+            }
+          }
+        ],
+        "description": "Update portfolio details"
+      },
+      "delete": {
+        "summary": "delete a portfolio",
+        "tags": [
+          "Portfolios"
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        "description": "Delete a portfolio"
+      }
+    },
+    "/portfolios/{portfolioId}/holdings/{holdingId}": {
+      "parameters": [
+        {
+          "type": "string",
+          "name": "portfolioId",
+          "in": "path",
+          "required": true
+        },
+        {
+          "type": "string",
+          "name": "holdingId",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "get": {
+        "summary": "get a portfolio's holdings",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/HoldingRead"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        "tags": [
+          "Holdings"
+        ],
+        "description": "Get all holdings of a portfolio"
+      },
+      "delete": {
+        "summary": "delete a portfolio's holding",
+        "tags": [
+          "Holdings"
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        "description": "Remove a holding from a portfolio"
+      },
+      "put": {
+        "summary": "update a portfolio's holding",
+        "tags": [
+          "Holdings"
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/HoldingModify"
+            }
+          }
+        ],
+        "description": "Update details of a portfolio's holding"
+      }
+    },
+    "/portfolios/{portfolioId}/allocation": {
+      "parameters": [
+        {
+          "type": "string",
+          "name": "portfolioId",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "post": {
+        "summary": "create asset allocation",
+        "tags": [
+          "Allocations"
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/AllocationWrite"
+            }
+          }
+        ],
+        "description": "Create an asset allocation for a portfolio"
+      },
+      "get": {
+        "summary": "get asset allocation",
+        "tags": [
+          "Allocations"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/AllocationRead"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        "description": "Get an asset allocation for a portfolio"
+      },
+      "put": {
+        "summary": "update asset allocation",
+        "tags": [
+          "Allocations"
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/AllocationWrite"
+            }
+          }
+        ],
+        "description": "Update an asset allocation for a portfolio"
+      }
+    },
+    "/portfolios/{portfolioId}/holdings": {
+      "parameters": [
+        {
+          "type": "string",
+          "name": "portfolioId",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "post": {
+        "summary": "add holding to portfolio",
+        "tags": [
+          "Holdings"
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        "description": "Adds a holding to a portfolio",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/HoldingCreate"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "AllocationRead": {
+      "title": "Allocation Read",
+      "x-tags": [
+        "Allocations"
+      ],
+      "type": "object",
+      "properties": {
+        "assetAllocation": {
+          "type": "object",
+          "description": "the sum for each asset class percentage must equal 100.",
+          "properties": {
+            "stockPercentage": {
+              "type": "integer",
+              "maximum": 100
+            },
+            "bondPercentage": {
+              "type": "integer",
+              "maximum": 100
+            },
+            "cashPercentage": {
+              "type": "integer",
+              "maximum": 100
+            }
+          }
+        },
+        "stockAllocation": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "category": {
+                "type": "string"
+              },
+              "percentage": {
+                "type": "integer",
+                "description": "whole number as a percent. A value of 50 would represent 50%"
+              }
+            },
+            "required": [
+              "category",
+              "percentage"
+            ]
+          }
+        },
+        "bondAllocation": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "maturity": {
+                "type": "string"
+              },
+              "percentage": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "maturity",
+              "percentage"
+            ]
+          }
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "assetAllocation"
+      ]
+    },
+    "AllocationWrite": {
+      "title": "Allocation Write",
+      "type": "object",
+      "x-tags": [
+        "Allocations"
+      ],
+      "properties": {
+        "assetAllocation": {
+          "type": "object",
+          "description": "the sum for each asset class percentage must equal 100.",
+          "properties": {
+            "stockPercentage": {
+              "type": "integer",
+              "maximum": 100
+            },
+            "bondPercentage": {
+              "type": "integer",
+              "maximum": 100
+            },
+            "cashPercentage": {
+              "type": "integer",
+              "maximum": 100
+            }
+          }
+        },
+        "stockAllocation": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "category": {
+                "type": "string"
+              },
+              "percentage": {
+                "type": "integer",
+                "description": "whole number as a percent. A value of 50 would represent 50%"
+              }
+            },
+            "required": [
+              "category",
+              "percentage"
+            ]
+          }
+        },
+        "bondAllocation": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "maturity": {
+                "type": "string"
+              },
+              "percentage": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "maturity",
+              "percentage"
+            ]
+          }
+        }
+      },
+      "required": [
+        "assetAllocation"
+      ]
+    },
+    "HoldingRead": {
+      "title": "Holding Read",
+      "type": "object",
+      "x-tags": [
+        "Holdings"
+      ],
+      "description": "",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "assetType": {
+          "type": "string",
+          "enum": [
+            "stock",
+            "bond",
+            "cash"
+          ]
+        },
+        "ticker": {
+          "type": "string",
+          "description": "Ticker symbol"
+        },
+        "numberOfShares": {
+          "type": "integer",
+          "description": "Total quantity of units of the holding.",
+          "example": 50
+        },
+        "stopLossPercent": {
+          "type": "integer"
+        },
+        "stopLossType": {
+          "type": "string",
+          "enum": [
+            "trailing",
+            "hard"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "good",
+            "warning",
+            "danger"
+          ]
+        },
+        "notes": {
+          "type": "string"
+        },
+        "purchasePrice": {
+          "type": "number",
+          "description": "Current price of a single unit of the holding"
+        },
+        "purchaseDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "currentPrice": {
+          "type": "number"
+        },
+        "stopLossPrice": {
+          "type": "number"
+        },
+        "lastHighPrice": {
+          "type": "number",
+          "description": "The last highest price of the holding since it was purchased."
+        },
+        "totalValue": {
+          "type": "number",
+          "description": "Total value of the holding (currentPrice * numberOfShares)"
+        }
+      }
+    },
+    "PortfolioCreate": {
+      "title": "Portfolio Create",
+      "type": "object",
+      "x-tags": [
+        "Portfolios"
+      ],
+      "description": "Data for adding a portfolio",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "owner": {
+          "$ref": "#/definitions/Owner"
+        },
+        "allocation": {
+          "$ref": "#/definitions/AllocationWrite"
+        }
+      },
+      "required": [
+        "name",
+        "description",
+        "owner"
+      ]
+    },
+    "PortfolioDetails": {
+      "title": "Portfolio Details",
+      "type": "object",
+      "x-tags": [
+        "Portfolios"
+      ],
+      "description": "Data for retrieving a portfolio",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "owner": {
+          "$ref": "#/definitions/Owner"
+        },
+        "holdings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/HoldingRead"
+          }
+        },
+        "allocation": {
+          "$ref": "#/definitions/AllocationRead"
+        }
+      }
+    },
+    "PortfolioList": {
+      "title": "Portfolio List",
+      "type": "object",
+      "x-tags": [
+        "Portfolios"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "123sdf"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "owner": {
+          "$ref": "#/definitions/Owner"
+        },
+        "links": {
+          "type": "object",
+          "properties": {
+            "self": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "owner"
+      ]
+    },
+    "PortfolioUpdate": {
+      "title": "PortfolioUpdate",
+      "type": "object",
+      "description": "Data used to update a portfolio",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "owner": {
+          "$ref": "#/definitions/Owner"
+        }
+      },
+      "required": [
+        "name",
+        "description",
+        "owner"
+      ]
+    },
+    "HoldingCreate": {
+      "title": "Holding Create",
+      "type": "object",
+      "x-tags": [
+        "Holdings"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "stopLossType": {
+          "type": "string",
+          "enum": [
+            "trailing",
+            "hard"
+          ]
+        },
+        "stopLossPercent": {
+          "type": "integer"
+        },
+        "numberOfShares": {
+          "type": "integer",
+          "example": 50,
+          "description": "Total quantity of units of the holding."
+        },
+        "assetType": {
+          "type": "string",
+          "enum": [
+            "stock",
+            "bond",
+            "cash"
+          ]
+        },
+        "notes": {
+          "type": "string"
+        },
+        "purchasePrice": {
+          "type": "number",
+          "description": "Current price of a single unit of the holding"
+        },
+        "purchaseDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ticker": {
+          "type": "string",
+          "description": "Ticker symbol"
+        }
+      }
+    },
+    "HoldingModify": {
+      "title": "Holding Modify",
+      "type": "object",
+      "x-tags": [
+        "Holdings"
+      ],
+      "properties": {
+        "purchaseDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "purchasePrice": {
+          "type": "number",
+          "description": "Current price of a single unit of the holding"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "assetType": {
+          "type": "string",
+          "enum": [
+            "stock",
+            "bond",
+            "cash"
+          ]
+        },
+        "numberOfShares": {
+          "type": "integer",
+          "example": 50,
+          "description": "Total quantity of units of the holding."
+        },
+        "stopLossPercent": {
+          "type": "integer"
+        },
+        "stopLossType": {
+          "type": "string",
+          "enum": [
+            "trailing",
+            "hard"
+          ]
+        },
+        "description": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "Owner": {
+      "title": "Owner",
+      "type": "object",
+      "x-tags": [
+        "Portfolios"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "ErrorResponse": {
+      "title": "ErrorResponse",
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "error",
+        "message"
+      ],
+      "description": "400 status: \n- Wrong resource or base path\n404 status:\n- Resource id does not exist"
+    }
+  }
+}
